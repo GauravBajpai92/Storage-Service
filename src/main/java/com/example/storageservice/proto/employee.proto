@@ -1,0 +1,13 @@
+syntax="proto3";
+
+option java_outer_classname = "EmployeeProto";
+import "google/protobuf/timestamp.proto";
+
+message Employee {
+   string emp_id = 1;
+   string emp_name = 2;
+   google.protobuf.Timestamp dob = 3;
+   double salary = 4;
+   int32 age = 5;
+
+  }
