@@ -1,6 +1,5 @@
 package com.example.storageservice.service;
 
-import com.example.storageservice.model.EmployeeDto;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -20,5 +19,5 @@ import java.util.UUID;
 
 public interface FileStorageService {
     abstract void receiveMessage(@Payload byte[] employeeDto, @Headers Map<String, Object> headers) throws CsvRequiredFieldEmptyException, IOException, CsvDataTypeMismatchException, JAXBException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException;
-    abstract EmployeeDto getEmployeeByID(UUID empId) throws IOException, JAXBException;
+    abstract byte[] getEmployeeByID(UUID empId) throws IOException, JAXBException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException;
 }

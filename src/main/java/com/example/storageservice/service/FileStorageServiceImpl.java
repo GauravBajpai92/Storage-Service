@@ -5,8 +5,8 @@ import com.example.storageservice.model.EmployeeDto;
 import com.example.storageservice.proto.EmployeeProto;
 import com.example.storageservice.security.SecurityService;
 import com.example.storageservice.util.CsvUtil;
+import com.example.storageservice.util.ProtoPojoConversionUtil;
 import com.example.storageservice.util.XmlUtil;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +45,10 @@ public class FileStorageServiceImpl implements FileStorageService{
                                ) throws CsvRequiredFieldEmptyException, IOException, CsvDataTypeMismatchException, JAXBException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
 
         log.info("Received data in bytes format");
-        byte[] message1 =securityService.decryptData(employeeDto);
-        EmployeeProto.Employee emp1 = EmployeeProto.Employee.parseFrom(message1);
-        log.info("Received data in bytes format "+emp1);
-        EmployeeDto empDto = EmployeeDto.builder().empId(emp1.getEmpId()).empName(emp1.getEmpName()).age(emp1.getAge()).salary(emp1.getSalary()).build();
+        byte[] protoBytesMessage =securityService.decryptData(employeeDto);
+        EmployeeProto.Employee empProto = EmployeeProto.Employee.parseFrom(protoBytesMessage);
+        log.info("Received data in bytes format "+empProto);
+        EmployeeDto empDto = ProtoPojoConversionUtil.toPojo(empProto);
 
         saveFile(empDto,String.valueOf(headers.get("filetype")));
 
@@ -66,13 +66,16 @@ public class FileStorageServiceImpl implements FileStorageService{
         }
     }
 
-    public EmployeeDto getEmployeeByID(UUID empId) throws IOException, JAXBException {
+    public byte[] getEmployeeByID(UUID empId) throws IOException, JAXBException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
         EmployeeDto employeeDto=null;
 
         employeeDto= getEmployeeFromFile(empId);
+        EmployeeProto.Employee employee = ProtoPojoConversionUtil.toProto(employeeDto);
+        byte[] empArray = employee.toByteArray();
+        byte[] securedArray = securityService.encryptData(empArray);
         //securityService.cipherData(employeeDto);
-
-        return employeeDto;
+             //   securityService
+        return securedArray;
     }
 
     private EmployeeDto getEmployeeFromFile(UUID empId) throws IOException, JAXBException {
