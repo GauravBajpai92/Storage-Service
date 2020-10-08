@@ -26,7 +26,7 @@ public class CsvUtil {
                 new ColumnPositionMappingStrategy<>();
         mappingStrategy.setType(EmployeeDto.class);
         String[] columns = new String[]
-                { "empId","empName", "dob", "salary","age" };
+                { "empId","empName", "salary","age" };
         mappingStrategy.setColumnMapping(columns);
         StatefulBeanToCsvBuilder<EmployeeDto> builder=
                 new StatefulBeanToCsvBuilder(writer);
